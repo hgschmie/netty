@@ -20,24 +20,18 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.EventLoop;
 import io.netty.channel.EventLoopGroup;
-import io.netty.util.concurrent.DefaultPromise;
-import io.netty.util.concurrent.FailedFuture;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.Promise;
-import io.netty.util.concurrent.SucceededFuture;
+import io.netty.util.concurrent.AbstractEventExecutor;
+import io.netty.util.concurrent.ScheduledFuture;
 
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.AbstractExecutorService;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-final class EmbeddedEventLoop extends AbstractExecutorService implements EventLoop {
+final class EmbeddedEventLoop extends AbstractEventExecutor implements EventLoop {
 
-    private final SucceededFuture succeededFuture = new SucceededFuture(this);
     private final Queue<Runnable> tasks = new ArrayDeque<Runnable>(2);
 
     @Override
@@ -139,20 +133,5 @@ final class EmbeddedEventLoop extends AbstractExecutorService implements EventLo
     @Override
     public EventLoopGroup parent() {
         return this;
-    }
-
-    @Override
-    public Promise newPromise() {
-        return new DefaultPromise(this);
-    }
-
-    @Override
-    public Future newSucceededFuture() {
-        return succeededFuture;
-    }
-
-    @Override
-    public Future newFailedFuture(Throwable cause) {
-        return new FailedFuture(this, cause);
     }
 }
